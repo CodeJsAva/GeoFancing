@@ -32,7 +32,7 @@ public class GeofenceTrasitionService extends IntentService {
     public GeofenceTrasitionService() {
         super(TAG);
     }
-
+//use to assign id to notification
     int i = 0;
 
     @Override
