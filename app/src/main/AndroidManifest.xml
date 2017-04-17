@@ -5,6 +5,9 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <uses-feature
+        android:name="android.hardware.location.gps"
+        android:required="true" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -14,17 +17,22 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <service
-            android:name=".GeoFancingService"
-            android:enabled="true"
-            ></service>
-        <service android:name=".DemoService"
-            android:enabled="true"/>
+            android:name=".GeoFencingService"
+            android:exported="false"
+           />
+        <service
+            android:name=".DDPClient"
+            android:exported="false" />
+        <service
+            android:name=".GeofenceTrasitionService"
+            android:exported="false" />
     </application>
-    <meta-data android:name="com.google.android.gms.version"
+    <meta-data
+        android:name="com.google.android.gms.version"
         android:value="@integer/google_play_services_version" />
 </manifest>
