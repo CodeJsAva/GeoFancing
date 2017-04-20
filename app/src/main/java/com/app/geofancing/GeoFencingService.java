@@ -46,8 +46,9 @@ public class GeoFencingService extends Service implements GoogleApiClient.Connec
     GeoFenceObject geoFenceObject;
     static GeoFencingService demo;
     public MyThread myThread;
-    HashMap<String,GeoFenceObject> lisFenceObjectHashMap=new HashMap<>();
-
+    HashMap<String, GeoFenceObject> lisFenceObjectHashMap = new HashMap<>();
+    MyLocation myLocation;
+    Location mlocation;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -78,8 +79,10 @@ public class GeoFencingService extends Service implements GoogleApiClient.Connec
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        demo=this;
-        DDPClient.getInstance().initializeCallbacks();
+        myLocation.getLastKnownLocation();
+        demo = this;
+        if (myLocation!=null)
+        DDPClient.getInstance().initializeCallbacks(mlocation);
     }
 
     @Override
@@ -96,7 +99,7 @@ public class GeoFencingService extends Service implements GoogleApiClient.Connec
     public void createGeofence(GeoFenceObject geoFenceObject) {
 
         this.geoFenceObject = geoFenceObject;
-        lisFenceObjectHashMap.put(geoFenceObject.getId(),geoFenceObject);
+        lisFenceObjectHashMap.put(geoFenceObject.getId(), geoFenceObject);
         Log.d("Tag", "createGeofence");
         Geofence geofence = new Geofence.Builder()
                 .setRequestId(geoFenceObject.getId())
@@ -129,8 +132,7 @@ public class GeoFencingService extends Service implements GoogleApiClient.Connec
                     request,
                     createGeofencePendingIntent()
             ).setResultCallback(this);
-        }
-        else {
+        } else {
             Log.i("TAG", "enabling()");
             Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -162,7 +164,7 @@ public class GeoFencingService extends Service implements GoogleApiClient.Connec
     }
 
 
-    public GoogleApiClient createGoogleApi(GeoFencingService geoFancingService) {
+  /*  public GoogleApiClient createGoogleApi(GeoFencingService geoFancingService) {
         Log.d("tag", "createGoogleApi()......");
         if (googleApiClient == null) {
             googleApiClient = new GoogleApiClient.Builder(this)
@@ -172,15 +174,17 @@ public class GeoFencingService extends Service implements GoogleApiClient.Connec
                     .build();
         }
         return googleApiClient;
-    }
-    public  HashMap<String,GeoFenceObject> getList()
-    {
+    }*/
+
+    public HashMap<String, GeoFenceObject> getList() {
         return lisFenceObjectHashMap;
     }
 
     @Override
     public void onLocationChanged(Location location) {
-
+       /* Log.d("Location chaanged", String.valueOf(location));
+        if (location!=null)
+            DDPClient.getInstance().initializeCallbacks(mlocation);*/
     }
 
     public class MyThread implements Runnable {
@@ -193,7 +197,9 @@ public class GeoFencingService extends Service implements GoogleApiClient.Connec
 
         @Override
         public void run() {
-            googleApiClient = createGoogleApi(demoService);
+
+            myLocation = new MyLocation(demoService.getBaseContext(),demoService);
+            googleApiClient = myLocation.createGoogleApi(demoService);
             googleApiClient.connect();
         }
     }

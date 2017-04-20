@@ -3,6 +3,7 @@ package com.app.geofancing;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -15,6 +16,7 @@ import org.json.JSONObject;
 import im.delight.android.ddp.Meteor;
 import im.delight.android.ddp.MeteorCallback;
 import im.delight.android.ddp.ResultListener;
+import im.delight.android.ddp.SubscribeListener;
 
 /**
  * Created by beyond on 14-Apr-17.
@@ -26,6 +28,7 @@ public class DDPClient extends Service implements MeteorCallback {
     Context context;
     MyThread myThread;
     static DDPClient ddpClient;
+    Location mLocation;
 
     public DDPClient() {
 
@@ -49,7 +52,7 @@ public class DDPClient extends Service implements MeteorCallback {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("DDP CLIENT", "started");
         ddpClient = this;
-        mMeteor = new Meteor(ddpClient, "ws://geoadvts.herokuapp.com/websocket");
+
         myThread = new MyThread(startId, this, context);
         Thread thread = new Thread(myThread);
         thread.start();
@@ -83,7 +86,8 @@ public class DDPClient extends Service implements MeteorCallback {
 
             });
         }
-        String subscriptionId = mMeteor.subscribe("fences.all");
+
+        subscribeForData();
     }
 
     @Override
@@ -158,11 +162,24 @@ public class DDPClient extends Service implements MeteorCallback {
 
     }
 
-    public void initializeCallbacks() {
-        fencingService = GeoFencingService.getInstance();
-        mMeteor.addCallback(ddpClient);
+    public void subscribeForData() {
+        Log.d("subscribe","Called");
+        String subscriptionId = mMeteor.subscribe("fences.nearest", new Object[]{26.837430, 75.833032}, new SubscribeListener() {
+            @Override
+            public void onSuccess() {
 
-        // establish the connection
+            }
+
+            @Override
+            public void onError(String error, String reason, String details) {
+
+            }
+        });
+    }
+
+    public void initializeCallbacks(Location mlocation) {
+        this.mLocation=mlocation;
+
         mMeteor.connect();
     }
 
@@ -179,7 +196,9 @@ public class DDPClient extends Service implements MeteorCallback {
 
         @Override
         public void run() {
-
+            mMeteor = new Meteor(ddpClient, "ws://geoadvts.herokuapp.com/websocket");
+            fencingService = GeoFencingService.getInstance();
+            mMeteor.addCallback(ddpClient);
         }
     }
 }
