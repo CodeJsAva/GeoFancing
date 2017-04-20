@@ -28,7 +28,7 @@ public class DDPClient extends Service implements MeteorCallback {
     Context context;
     MyThread myThread;
     static DDPClient ddpClient;
-
+    Thread thread;
     public DDPClient() {
 
     }
@@ -50,10 +50,12 @@ public class DDPClient extends Service implements MeteorCallback {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("DDP CLIENT", "started");
-        ddpClient = this;
+
 
         myThread = new MyThread(startId, this, context);
-        Thread thread = new Thread(myThread);
+
+        thread = new Thread(myThread);
+        thread.setPriority(Thread.MAX_PRIORITY);
         thread.start();
         return START_STICKY;
     }
@@ -190,6 +192,8 @@ public class DDPClient extends Service implements MeteorCallback {
 
         @Override
         public void run() {
+            //initializing Singleton object of class
+            DDPClient.ddpClient=ddpClient;
             mMeteor = new Meteor(ddpClient, "ws://geoadvts.herokuapp.com/websocket");
             fencingService = GeoFencingService.getInstance();
             mMeteor.addCallback(ddpClient);

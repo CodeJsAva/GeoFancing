@@ -152,7 +152,7 @@ public class GeoFencingService extends Service implements GoogleApiClient.Connec
 
         Intent intent = new Intent(this, GeofenceTrasitionService.class);
         return PendingIntent.getService(
-                this, GEOFENCE_REQ_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                this,geoFenceObject.getId().hashCode() , intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
 
@@ -168,8 +168,14 @@ public class GeoFencingService extends Service implements GoogleApiClient.Connec
     @Override
     public void onLocationChanged(Location location) {
         Log.d("Location chaanged", String.valueOf(location));
+
         if (DDPClient.getInstance()!=null)
             DDPClient.getInstance().subscribeForData(location);
+        else
+        {
+            Log.d("Location chaanged"," called again");
+            onLocationChanged(location);
+        }
     }
 
 

@@ -66,17 +66,17 @@ public class GeofenceTrasitionService extends IntentService {
 
 
     // Send a notification
-    private void sendNotification(GeoFenceObject geofenceTransitionDetails) {
+    private void sendNotification(GeoFenceObject geoFenceObject) {
         Notification n = new Notification.Builder(this)
-                .setContentTitle(geofenceTransitionDetails.getAdvertisment().getTitle())
+                .setContentTitle(geoFenceObject.getAdvertisment().getTitle())
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentText(geofenceTransitionDetails.getAdvertisment().getDiscription())
+                .setContentText(geoFenceObject.getAdvertisment().getDiscription())
                 .setDefaults(Notification.DEFAULT_LIGHTS)
                 .setAutoCancel(false)
                 .build();
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(0,n);
+        notificationManager.notify(geoFenceObject.getId().hashCode(),n);
 
     }
 
