@@ -33,7 +33,7 @@ public class GeofenceTrasitionService extends IntentService {
         super(TAG);
     }
 //use to assign id to notification
-    int i = 0;
+
 
     @Override
     protected void onHandleIntent(Intent intent) {
@@ -76,8 +76,8 @@ public class GeofenceTrasitionService extends IntentService {
                 .build();
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(i, n);
-        i++;
+        notificationManager.notify(0,n);
+
     }
 
     // Handle errors

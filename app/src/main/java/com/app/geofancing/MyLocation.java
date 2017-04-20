@@ -28,8 +28,8 @@ public class MyLocation  {
     private Location lastLocation;
     private LocationRequest locationRequest;
     final String ACTION_BEACON_TRIGGER = "101";
-    private final int UPDATE_INTERVAL = 300000;
-    private final int FASTEST_INTERVAL = 900;
+    private final int UPDATE_INTERVAL = 1000*60*3;
+    private final int FASTEST_INTERVAL = 1000*60*2;
 
     private Context context;
     GeoFencingService geoFancingService;
@@ -77,7 +77,8 @@ public class MyLocation  {
         locationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(UPDATE_INTERVAL)
-                .setFastestInterval(FASTEST_INTERVAL);
+                .setFastestInterval(FASTEST_INTERVAL)
+                .setSmallestDisplacement(100);
 
         if (checkPermission())
             LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, geoFancingService);

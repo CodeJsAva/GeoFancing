@@ -28,7 +28,6 @@ public class DDPClient extends Service implements MeteorCallback {
     Context context;
     MyThread myThread;
     static DDPClient ddpClient;
-    Location mLocation;
 
     public DDPClient() {
 
@@ -77,6 +76,7 @@ public class DDPClient extends Service implements MeteorCallback {
                     System.out.println("Successfully logged in: " + result);
                     System.out.println("Is logged in: " + mMeteor.isLoggedIn());
                     System.out.println("User ID: " + mMeteor.getUserId());
+
                 }
 
                 @Override
@@ -86,8 +86,6 @@ public class DDPClient extends Service implements MeteorCallback {
 
             });
         }
-
-        subscribeForData();
     }
 
     @Override
@@ -162,25 +160,21 @@ public class DDPClient extends Service implements MeteorCallback {
 
     }
 
-    public void subscribeForData() {
+    public void subscribeForData(Location mLocation) {
         Log.d("subscribe","Called");
-        String subscriptionId = mMeteor.subscribe("fences.nearest", new Object[]{26.837430, 75.833032}, new SubscribeListener() {
-            @Override
-            public void onSuccess() {
+        if (mMeteor!=null) {
+            String subscriptionId = mMeteor.subscribe("fences.nearest", new Object[]{mLocation.getLatitude(), mLocation.getLongitude()}, new SubscribeListener() {
+                @Override
+                public void onSuccess() {
+                    Log.d("Data", "success");
+                }
 
-            }
-
-            @Override
-            public void onError(String error, String reason, String details) {
-
-            }
-        });
-    }
-
-    public void initializeCallbacks(Location mlocation) {
-        this.mLocation=mlocation;
-
-        mMeteor.connect();
+                @Override
+                public void onError(String error, String reason, String details) {
+                    Log.d("Data", error + " reason " + reason + "/n details " + details);
+                }
+            });
+        }
     }
 
     public class MyThread implements Runnable {
@@ -199,6 +193,7 @@ public class DDPClient extends Service implements MeteorCallback {
             mMeteor = new Meteor(ddpClient, "ws://geoadvts.herokuapp.com/websocket");
             fencingService = GeoFencingService.getInstance();
             mMeteor.addCallback(ddpClient);
+            mMeteor.connect();
         }
     }
 }

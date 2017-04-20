@@ -66,7 +66,7 @@ public class GeoFencingService extends Service implements GoogleApiClient.Connec
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
+        demo = this;
         return START_STICKY;
     }
 
@@ -80,9 +80,7 @@ public class GeoFencingService extends Service implements GoogleApiClient.Connec
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         myLocation.getLastKnownLocation();
-        demo = this;
-        if (myLocation!=null)
-        DDPClient.getInstance().initializeCallbacks(mlocation);
+     //   demo = this;
     }
 
     @Override
@@ -93,6 +91,7 @@ public class GeoFencingService extends Service implements GoogleApiClient.Connec
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         googleApiClient.connect();
+
     }
 
     // Create a Geofence
@@ -107,8 +106,7 @@ public class GeoFencingService extends Service implements GoogleApiClient.Connec
                         geoFenceObject.getLongitude(),
                         geoFenceObject.getRadius())
                 .setExpirationDuration(GEO_DURATION)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER
-                        | Geofence.GEOFENCE_TRANSITION_EXIT)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
                 .build();
         createGeofenceRequest(geofence);
     }
@@ -163,29 +161,17 @@ public class GeoFencingService extends Service implements GoogleApiClient.Connec
 
     }
 
-
-  /*  public GoogleApiClient createGoogleApi(GeoFencingService geoFancingService) {
-        Log.d("tag", "createGoogleApi()......");
-        if (googleApiClient == null) {
-            googleApiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(geoFancingService)
-                    .addOnConnectionFailedListener(geoFancingService)
-                    .addApi(LocationServices.API)
-                    .build();
-        }
-        return googleApiClient;
-    }*/
-
     public HashMap<String, GeoFenceObject> getList() {
         return lisFenceObjectHashMap;
     }
 
     @Override
     public void onLocationChanged(Location location) {
-       /* Log.d("Location chaanged", String.valueOf(location));
-        if (location!=null)
-            DDPClient.getInstance().initializeCallbacks(mlocation);*/
+        Log.d("Location chaanged", String.valueOf(location));
+        if (DDPClient.getInstance()!=null)
+            DDPClient.getInstance().subscribeForData(location);
     }
+
 
     public class MyThread implements Runnable {
         GeoFencingService demoService;
