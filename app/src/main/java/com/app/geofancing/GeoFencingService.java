@@ -1,10 +1,9 @@
 package com.app.geofancing;
 
-import android.Manifest;
-import android.app.Activity;
+
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
+
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -13,10 +12,9 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
+
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -26,12 +24,10 @@ import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
-import com.intentfilter.androidpermissions.PermissionManager;
+
 
 import java.util.HashMap;
-import java.util.List;
 
-import static java.util.Collections.singleton;
 
 /**
  * Created by kartik on 22-Mar-17.
@@ -41,14 +37,13 @@ public class GeoFencingService extends Service implements GoogleApiClient.Connec
 
     private GoogleApiClient googleApiClient;
     private static final long GEO_DURATION = 60 * 60 * 1000;
-    private final int GEOFENCE_REQ_CODE = 0;
     boolean isStart = false;
     GeoFenceObject geoFenceObject;
     static GeoFencingService demo;
     public MyThread myThread;
     HashMap<String, GeoFenceObject> lisFenceObjectHashMap = new HashMap<>();
     MyLocation myLocation;
-    Location mlocation;
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -80,7 +75,6 @@ public class GeoFencingService extends Service implements GoogleApiClient.Connec
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         myLocation.getLastKnownLocation();
-     //   demo = this;
     }
 
     @Override
@@ -105,7 +99,7 @@ public class GeoFencingService extends Service implements GoogleApiClient.Connec
                 .setCircularRegion(geoFenceObject.getLatitude(),
                         geoFenceObject.getLongitude(),
                         geoFenceObject.getRadius())
-                .setExpirationDuration(GEO_DURATION)
+                .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
                 .build();
         createGeofenceRequest(geofence);
@@ -189,7 +183,6 @@ public class GeoFencingService extends Service implements GoogleApiClient.Connec
 
         @Override
         public void run() {
-
             myLocation = new MyLocation(demoService.getBaseContext(),demoService);
             googleApiClient = myLocation.createGoogleApi(demoService);
             googleApiClient.connect();

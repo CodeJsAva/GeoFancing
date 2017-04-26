@@ -37,15 +37,12 @@ import static im.delight.android.ddp.Meteor.log;
 
 
 public class MainActivity extends AppCompatActivity {
-    TextView taxtLat, textLong;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        taxtLat = (TextView) findViewById(R.id.lat);
-        textLong = (TextView) findViewById(R.id.longi);
         //Fencing Service
         Intent i = new Intent(this, GeoFencingService.class);
         startService(i);

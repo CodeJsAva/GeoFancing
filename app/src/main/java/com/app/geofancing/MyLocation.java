@@ -1,35 +1,26 @@
 package com.app.geofancing;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 /**
- * Created by beyond on 21-Mar-17.
+ * Created by kartik on 21-Mar-17.
  */
+public class MyLocation {
 
-public class MyLocation  {
 
-    private static final int REQ_PERMISSION = 1;
     private GoogleApiClient googleApiClient;
     private Location lastLocation;
     private LocationRequest locationRequest;
-    final String ACTION_BEACON_TRIGGER = "101";
-    private final int UPDATE_INTERVAL = 1000*60*3;
-    private final int FASTEST_INTERVAL = 1000*60*2;
+
+    private final int UPDATE_INTERVAL = 1000 * 60 * 3;
+    private final int FASTEST_INTERVAL = 1000 * 60 * 2;
 
     private Context context;
     GeoFencingService geoFancingService;
@@ -72,13 +63,14 @@ public class MyLocation  {
     }
 
     // Start mylocation Updates
-    private void startLocationUpdates(GeoFencingService geoFancingService ) {
+    private void startLocationUpdates(GeoFencingService geoFancingService) {
         Log.i("TAG", "startLocationUpdates()");
         locationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(UPDATE_INTERVAL)
                 .setFastestInterval(FASTEST_INTERVAL)
                 .setSmallestDisplacement(100);
+
 
         if (checkPermission())
             LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, geoFancingService);
@@ -91,9 +83,6 @@ public class MyLocation  {
         return (ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED);
     }
-
-    // Verify user's response of the permission requested
-
 
     // App cannot work without the permissions
     private void permissionsDenied() {

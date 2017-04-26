@@ -31,5 +31,5 @@ dependencies {
     compile 'com.google.android.gms:play-services-location:10.2.0'
     compile "com.android.support:support-v4:25.0.+"
     compile 'com.github.delight-im:Android-DDP:v3.3.0'
-    compile 'com.intentfilter:android-permissions:0.1.2'
+
 }
